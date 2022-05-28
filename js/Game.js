@@ -7,6 +7,8 @@ class Game {
 
     this.leader1 = createElement("h2");
     this.leader2 = createElement("h2");
+
+    this.playerMoving= false;
   }
 
   getState() {
@@ -159,6 +161,11 @@ class Game {
         }
       }
 
+      if(this.playerMoving){
+        player.positionY += 5
+        player.update();
+      }
+
       // handling keyboard events
       this.handlePlayerControls();
 
@@ -191,11 +198,11 @@ class Game {
 
   showLife() {
     push();
-    image(lifeImage, width / 2 - 130, height - player.positionY - 400, 20, 20);
+    image(lifeImage, width / 2 - 130, height - player.positionY - 300, 20, 20);
     fill("white");
-    rect(width / 2 - 100, height - player.positionY - 400, 185, 20);
+    rect(width / 2 - 100, height - player.positionY - 300, 185, 20);
     fill("#f50057");
-    rect(width / 2 - 100, height - player.positionY - 400, player.life, 20);
+    rect(width / 2 - 100, height - player.positionY - 300, player.life, 20);
     noStroke();
     pop();
   }
@@ -258,6 +265,7 @@ class Game {
     if (keyIsDown(UP_ARROW)) {
       player.positionY += 10;
       player.update();
+      this.playerMoving=true;
     }
 
     if (keyIsDown(LEFT_ARROW) && player.positionX > width / 3 - 50) {
@@ -279,6 +287,16 @@ class Game {
       //the event
       collected.remove();
     });
+
+    if (player.fuel > 0 && this.playerMoving){
+      player.fuel -= 0.3;
+    }
+
+    if(player.fuel <= 0){
+      gameState=2;
+      this.gameOver();
+
+    }
   }
 
   handlePowerCoins(index) {
